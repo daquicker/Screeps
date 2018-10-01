@@ -19,10 +19,10 @@ module.exports.loop = function () {
     }
 
     // Initialize variables to keep count of creeps per type
-    var buildersCount = 7
-    var harvestersCount = 2
-    var repairersCount = 1
-    var upgradersCount = 1
+    var buildersCount = 0
+    var harvestersCount = 0
+    var repairersCount = 0
+    var upgradersCount = 0
 
     // Iterate through all creeps and run appropriate code by memory-set role and count them - Put whatever type you most likely have most of first to reduce unnecessary checks
     for (let name in Game.creeps) {
