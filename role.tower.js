@@ -1,15 +1,14 @@
 var roleTower = {
 
-    /** @param {Tower} tower **/
     run: function (tower) {
-        var closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
+        var closestDamagedStructure = tower.pos.findInRange(FIND_STRUCTURES, {
             filter: (structure) => structure.hits < structure.hitsMax
-        });
+        }, 5);
         if (closestDamagedStructure) {
             tower.repair(closestDamagedStructure);
         }
 
-        var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+        var closestHostile = tower.pos.findInRange(FIND_HOSTILE_CREEPS, 5);
         if (closestHostile) {
             tower.attack(closestHostile);
         }

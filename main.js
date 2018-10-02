@@ -3,11 +3,12 @@ var roleBuilder = require('role.builder');
 var roleHarvester = require('role.harvester');
 var roleRepairer = require('role.repairer');
 var roleUpgrader = require('role.upgrader');
+var roleTower = require('role.tower');
 
 module.exports.loop = function () {
 
     // pseudo-code to run a tower by its ID --UNTESTED--
-    var tower = Game.getObjectById('66ae77142b090824f4c3b22e');
+    var tower = Game.getObjectById('1ba0f079b43bd5da652235e1');
     if (tower) {
         roleTower.run(tower);
     }
@@ -47,13 +48,14 @@ module.exports.loop = function () {
     }
 
     // Set desired number of creeps per role
-    var desiredBuildersCount = 5
-    var desiredHarvestersCount = 3
+    var desiredBuildersCount = 3
+    var desiredHarvestersCount = 2
     var desiredRepairersCount = 1
     var desiredUpgradersCount = 1
 
     // Get maximum energy capacity in the room
     var maxEnergy = Game.spawns['Spawn1'].room.energyCapacityAvailable;
+
     // Spawn extra creeps if necessary and possibly - Only one can be spawned at the same time, priority goes from top to bottom
     if (harvestersCount < desiredHarvestersCount) {
         let newName = 'Harvester' + Game.time;
