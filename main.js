@@ -7,7 +7,7 @@ var roleTower = require('role.tower');
 
 module.exports.loop = function () {
 
-    // pseudo-code to run a tower by its ID --UNTESTED--
+    // Get a tower by it's ID and run the tower logic on it
     var tower = Game.getObjectById('1ba0f079b43bd5da652235e1');
     if (tower) {
         roleTower.run(tower);
@@ -58,19 +58,15 @@ module.exports.loop = function () {
 
     // Spawn extra creeps if necessary and possibly - Only one can be spawned at the same time, priority goes from top to bottom
     if (harvestersCount < desiredHarvestersCount) {
-        let newName = 'Harvester' + Game.time;
         Game.spawns['Spawn1'].createCustomCreep(maxEnergy, 'harvester');
     }
     else if (repairersCount < desiredRepairersCount) {
-        let newName = 'repairer' + Game.time;
         Game.spawns['Spawn1'].createCustomCreep(maxEnergy, 'repairer');
     }
     else if (buildersCount < desiredBuildersCount) {
-        let newName = 'builder' + Game.time;
         Game.spawns['Spawn1'].createCustomCreep(maxEnergy, 'builder');
     }
     else if (upgradersCount < desiredUpgradersCount) {
-        let newName = 'upgrader' + Game.time;
         Game.spawns['Spawn1'].createCustomCreep(maxEnergy, 'upgrader');
     }
 }
