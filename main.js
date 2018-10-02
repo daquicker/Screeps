@@ -1,3 +1,4 @@
+require('prototype.spawn')();
 var roleBuilder = require('role.builder');
 var roleHarvester = require('role.harvester');
 var roleRepairer = require('role.repairer');
@@ -51,21 +52,23 @@ module.exports.loop = function () {
     var desiredRepairersCount = 1
     var desiredUpgradersCount = 1
 
+    // Get maximum energy capacity in the room
+    var maxEnergy = Game.spawns['Spawn1'].room.energyCapacityAvailable;
     // Spawn extra creeps if necessary and possibly - Only one can be spawned at the same time, priority goes from top to bottom
     if (harvestersCount < desiredHarvestersCount) {
         let newName = 'Harvester' + Game.time;
-        Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], newName, { memory: { role: 'harvester' } });
+        Game.spawns['Spawn1'].createCustomCreep(maxEnergy, 'harvester');
     }
     else if (repairersCount < desiredRepairersCount) {
         let newName = 'repairer' + Game.time;
-        Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], newName, { memory: { role: 'repairer' } });
+        Game.spawns['Spawn1'].createCustomCreep(maxEnergy, 'repairer');
     }
     else if (buildersCount < desiredBuildersCount) {
         let newName = 'builder' + Game.time;
-        Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], newName, { memory: { role: 'builder' } });
+        Game.spawns['Spawn1'].createCustomCreep(maxEnergy, 'builder');
     }
     else if (upgradersCount < desiredUpgradersCount) {
         let newName = 'upgrader' + Game.time;
-        Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], newName, { memory: { role: 'upgrader' } });
+        Game.spawns['Spawn1'].createCustomCreep(maxEnergy, 'upgrader');
     }
 }
