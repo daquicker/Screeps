@@ -1,4 +1,4 @@
-var roleUpgrader = require('role.upgrader');
+var roleBuilder = require('role.builder');
 
 var roleRepairer = {
 
@@ -23,20 +23,20 @@ var roleRepairer = {
             });
             if (closestDamagedStructure) {
                 if (creep.repair(closestDamagedStructure) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(closestDamagedStructure.pos, { visualizePathStyle: { stroke: '#37ff14' } });
+                    creep.moveTo(closestDamagedStructure.pos, { visualizePathStyle: { stroke: '#37ff14' }, reusePath: 2 });
                 }
             }
                 // No repair site found, run as upgrader
             else {
-                roleUpgrader.run(creep);
+                roleBuilder.run(creep);
             }
         }
 
             // Creep is not ready to work, look for energy source and go there
         else {
             let sources = creep.room.find(FIND_SOURCES);
-            if (creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(sources[0], { visualizePathStyle: { stroke: '#ffaa00' } });
+            if (creep.harvest(sources[0]) != 0) {
+                creep.moveTo(sources[0], { visualizePathStyle: { stroke: '#ffaa00' }, reusePath: 2 });
             }
         }
     }

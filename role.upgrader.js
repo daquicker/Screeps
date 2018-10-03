@@ -17,15 +17,15 @@ var roleUpgrader = {
         // If creep is ready to work, look for work and go there
         if (creep.memory.working) {
             if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(creep.room.controller, { visualizePathStyle: { stroke: '#14ffdb' } });
+                creep.moveTo(creep.room.controller, { visualizePathStyle: { stroke: '#14ffdb' }, reusePath: 2 });
             }
         }
 
             // Creep is not ready to work, look for energy source and go there
         else {
             let sources = creep.room.find(FIND_SOURCES);
-            if (creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(sources[0], { visualizePathStyle: { stroke: '#ffaa00' } });
+            if (creep.harvest(sources[0]) != 0) {
+                creep.moveTo(sources[0], { visualizePathStyle: { stroke: '#ffaa00' }, reusePath: 2 });
             }
         }
     }

@@ -21,7 +21,7 @@ var roleBuilder = {
             let target = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
             if (target) {
                 if (creep.build(target) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target, { visualizePathStyle: { stroke: '#ffffff' } });
+                    creep.moveTo(target, { visualizePathStyle: { stroke: '#ffffff' }, reusePath: 2 });
                 }
             }
                 // No construction site found, run as upgrader
@@ -33,8 +33,8 @@ var roleBuilder = {
             // Creep is not ready to work, look for energy source and go there
         else {
             let sources = creep.room.find(FIND_SOURCES);
-            if (creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(sources[0], { visualizePathStyle: { stroke: '#ffaa00' } });
+            if (creep.harvest(sources[0]) != 0) {
+                creep.moveTo(sources[0], { visualizePathStyle: { stroke: '#ffaa00' }, reusePath: 2 });
             }
         }
     }

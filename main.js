@@ -47,8 +47,11 @@ module.exports.loop = function () {
         }
     }
 
+    // Store total number of owned creeps in a variable
+    var creepsCount = buildersCount + harvestersCount + repairersCount + upgradersCount;
+
     // Set desired number of creeps per role
-    var desiredBuildersCount = 3
+    var desiredBuildersCount = 4
     var desiredHarvestersCount = 2
     var desiredRepairersCount = 1
     var desiredUpgradersCount = 1
@@ -56,8 +59,12 @@ module.exports.loop = function () {
     // Get maximum energy capacity in the room
     var maxEnergy = Game.spawns['Spawn1'].room.energyCapacityAvailable;
 
-    // Spawn extra creeps if necessary and possibly - Only one can be spawned at the same time, priority goes from top to bottom
-    if (harvestersCount < desiredHarvestersCount) {
+    // Spawn a small harvester to (re)start the colony when needed
+    if (creepsCount == 0) {
+        Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], 'rebootHarvester', { memory: { role: 'harvester' } });
+    }
+        // Spawn extra creeps if necessary and possible - Only one can be spawned at the same time, priority goes from top to bottom
+    else if (harvestersCount < desiredHarvestersCount) {
         Game.spawns['Spawn1'].createCustomCreep(maxEnergy, 'harvester');
     }
     else if (repairersCount < desiredRepairersCount) {
