@@ -7,10 +7,13 @@ var roleTower = require('role.tower');
 
 module.exports.loop = function () {
 
-    // Get a tower by it's ID and run the tower logic on it
-    var tower = Game.getObjectById('1ba0f079b43bd5da652235e1');
-    if (tower) {
-        roleTower.run(tower);
+    // Get towers and run them
+    var towers = _.filter(Game.structures, (structure) => structure.structureType == STRUCTURE_TOWER);
+    for (let i = 0; i < towers.length; i++) {
+        let tower = towers[i];
+        if (tower) {
+            roleTower.run(tower);
+        }
     }
 
     // 'Garbage collection' in the memory - remove dead creeps from memory
@@ -26,7 +29,7 @@ module.exports.loop = function () {
     var repairersCount = 0
     var upgradersCount = 0
 
-    // Iterate through all creeps and run appropriate code by memory-set role and count them - Put whatever type you most likely have most of first to reduce unnecessary checks
+    // Iterate through all creeps, run appropriate code by memory-set role and count them - Put whatever type you most likely have most of first to reduce unnecessary checks
     for (let name in Game.creeps) {
         let creep = Game.creeps[name];
         if (creep.memory.role == 'builder') {

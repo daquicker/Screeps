@@ -33,7 +33,8 @@ var roleBuilder = {
             // Creep is not ready to work, look for energy source and go there
         else {
             let sources = creep.room.find(FIND_SOURCES);
-            if (creep.harvest(sources[0]) != 0) {
+            // Try to harvest and check if creep has long enough left to live
+            if (creep.harvest(sources[0]) != 0 && creep.ticksToLive > 50) {
                 creep.moveTo(sources[0], { visualizePathStyle: { stroke: '#ffaa00' }, reusePath: 2 });
             }
         }
