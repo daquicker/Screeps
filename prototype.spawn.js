@@ -15,6 +15,6 @@ module.exports = function () {
             }
 
             let creepName = roleName + Game.time;
-            return this.createCreep(body, creepName, { role: roleName, working: false });
+            return this.spawnCreep(body, creepName, { memory: { role: roleName, working: false } });
         };
 };

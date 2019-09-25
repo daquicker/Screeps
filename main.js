@@ -9,8 +9,8 @@ module.exports.loop = function () {
 
     // Get towers and run them
     var towers = _.filter(Game.structures, (structure) => structure.structureType == STRUCTURE_TOWER);
-    for (let i = 0; i < towers.length; i++) {
-        let tower = towers[i];
+    for (let ind in towers) {
+        let tower = towers[ind];
         if (tower) {
             roleTower.run(tower);
         }
