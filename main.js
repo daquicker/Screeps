@@ -7,6 +7,12 @@ var roleTower = require('role.tower');
 
 module.exports.loop = function () {
 
+    // Order inital roads if not done before
+    if (!Memory.initializedRoad) {
+        constrRoads.run('Spawn1');
+        Memory.initializedRoad = 1;
+    }
+
     // Get towers and run them
     var towers = _.filter(Game.structures, (structure) => structure.structureType == STRUCTURE_TOWER);
     for (let ind in towers) {
@@ -66,7 +72,7 @@ module.exports.loop = function () {
     if (creepsCount == 0) {
         Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], 'rebootHarvester', { memory: { role: 'harvester' } });
     }
-        // Spawn extra creeps if necessary and possible - Only one can be spawned at the same time, priority goes from top to bottom
+    // Spawn extra creeps if necessary and possible - Only one can be spawned at the same time, priority goes from top to bottom
     else if (harvestersCount < desiredHarvestersCount) {
         Game.spawns['Spawn1'].createCustomCreep(maxEnergy, 'harvester');
     }
