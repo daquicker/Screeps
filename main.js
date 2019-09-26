@@ -5,10 +5,16 @@ var roleRepairer = require('role.repairer');
 var roleUpgrader = require('role.upgrader');
 var roleTower = require('role.tower');
 
+// Initialize empty 'traversed' array in memory if it doesn't exist yet
+if (!Memory.traversed) {
+    Memory.traversed = [];
+}
+
 module.exports.loop = function () {
 
-    // Order inital roads if not done before
+    // Order initial roads if not done before
     if (!Memory.initializedRoad) {
+        let constrRoads = require('construction.roads.init');
         constrRoads.run('Spawn1');
         Memory.initializedRoad = 1;
     }
@@ -35,9 +41,13 @@ module.exports.loop = function () {
     var repairersCount = 0
     var upgradersCount = 0
 
-    // Iterate through all creeps, run appropriate code by memory-set role and count them - Put whatever type you most likely have most of first to reduce unnecessary checks
+    // Iterate through all creeps, run appropriate per-creep code and count them.
     for (let name in Game.creeps) {
         let creep = Game.creeps[name];
+
+        // Add current creep position to 'traversed' array in memory
+        Memory.traversed.push(creep.pos);
+
         if (creep.memory.role == 'builder') {
             buildersCount += 1;
             roleBuilder.run(creep);
@@ -54,6 +64,14 @@ module.exports.loop = function () {
             upgradersCount += 1;
             roleUpgrader.run(creep);
         }
+    }
+
+    // Check 'traversed' array in memory for positions that need roads constructed and reset 'traversed' array in memory
+    if (Memory.traversed.length >= 1000) {
+        let constrRoadsRep = require('construction.roads.repeat');
+        constrRoadsRep.run(Memory.traversed, 'Spawn1');
+        // Reset 'traversed' array
+        Memory.traversed = [];
     }
 
     // Store total number of owned creeps in a variable
