@@ -10,6 +10,11 @@ if (!Memory.traversed) {
     Memory.traversed = [];
 }
 
+// Initialize traversedCount in memory if it doesn't exist yet
+if (!Memory.traversedCount) {
+    Memory.traversedCount = 0;
+}
+
 module.exports.loop = function () {
 
     // Order initial roads if not done before
@@ -66,16 +71,21 @@ module.exports.loop = function () {
         }
     }
 
-    // Check 'traversed' array in memory for positions that need roads constructed and reset 'traversed' array in memory
-    if (Memory.traversed.length >= 1000) {
+    // Store total number of owned creeps in a variable
+    var creepsCount = buildersCount + harvestersCount + repairersCount + upgradersCount;
+
+    // Add up number of creeps currently alive to keep track of how many data points are stored in 'traversed' array - each creep adds one data point per cycle
+    Memory.traversedCount += creepsCount;
+
+    // Run logic governing additional road building if enough data points have been gathered in 'traversed' array in memory
+    if (Memory.traversedCount >= 1000) {
         let constrRoadsRep = require('construction.roads.repeat');
         constrRoadsRep.run(Memory.traversed, 'Spawn1');
         // Reset 'traversed' array
         Memory.traversed = [];
+        // Reset traversedCount
+        Memory.traversedCount = 0;
     }
-
-    // Store total number of owned creeps in a variable
-    var creepsCount = buildersCount + harvestersCount + repairersCount + upgradersCount;
 
     // Set desired number of creeps per role
     var desiredBuildersCount = 4
