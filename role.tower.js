@@ -9,7 +9,6 @@ var roleTower = {
         }
 
         var closestHostile = tower.pos.findInRange(FIND_HOSTILE_CREEPS, 5);
-        console.log(closestHostile);
         if (closestHostile) {
             tower.attack(closestHostile[0]);
         }

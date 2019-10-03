@@ -1,12 +1,13 @@
 var constrRoads = {
 
-    run: function (spawn) {
-        var sources = Game.spawns[spawn].room.find(FIND_SOURCES);
-        for (let indS in sources) {
-            let source = sources[indS];
+    run: function (spawn, sourceIDs) {
+        var sources = []
+        for (let sourceID of sourceIDs) {
+            sources.push(Game.getObjectById(sourceID));
+        }
+        for (let source of sources) {
             var path = Game.spawns[spawn].pos.findPathTo(source.pos, { range: 1, swampCost: 1, ignoreCreeps: 1 });
-            for (let indP in path) {
-                let tile = path[indP];
+            for (let tile of path) {
                 Game.spawns[spawn].room.createConstructionSite(tile.x, tile.y, STRUCTURE_ROAD);
             }
         }

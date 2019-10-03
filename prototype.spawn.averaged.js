@@ -1,5 +1,5 @@
 module.exports = function () {
-    StructureSpawn.prototype.createCustomCreep =
+    StructureSpawn.prototype.createAveragedCreep =
         function (energy, roleName) {
             // Get maximum (balanced) number of parts with given energy - CARRY = 50, MOVE = 50, WORK = 100
             var maxParts = Math.floor(energy / 200);
