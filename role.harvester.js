@@ -31,7 +31,7 @@ var roleHarvester = {
                     creep.moveTo(target, { visualizePathStyle: { stroke: '#f24602' }, reusePath: 2 });
                 }
             }
-                // No resupply site found, run as upgrader
+            // No resupply site found, run as upgrader
             else {
                 roleBuilder.run(creep, containerIDs, sourceIDs);
             }
@@ -54,7 +54,7 @@ var roleHarvester = {
                     creep.moveTo(container, { visualizePathStyle: { stroke: '#ffaa00' }, reusePath: 4 });
                 }
             }
-                // No containers in the room, find closest energy source to harvest
+            // No containers in the room, find closest energy source to harvest
             else {
                 let sources = [];
                 for (let sourceID of sourceIDs) {

@@ -3,6 +3,7 @@ require('prototype.spawn.miner')();
 require('prototype.spawn.hauler')();
 var roleBuilder = require('role.builder');
 var roleHarvester = require('role.harvester');
+var roleHarvesterReboot = require('role.harvester.reboot');
 var roleRepairer = require('role.repairer');
 var roleUpgrader = require('role.upgrader');
 var roleHauler = require('role.hauler');
@@ -100,6 +101,10 @@ module.exports.loop = function () {
             Game.spawns['Spawn1'].room.memory.traversed.push(creep.pos);
             roleBuilder.run(creep, Game.spawns['Spawn1'].room.memory.containerIDs, Game.spawns['Spawn1'].room.memory.sourceIDs);
         }
+        // Only used to (re)start the colony
+        else if (creep.memory.role == 'harvesterReboot') {
+            roleHarvesterReboot.run(creep, Game.spawns['Spawn1'].room.memory.sourceIDs);
+        }
         else if (creep.memory.role == 'harvester') {
             harvestersCount += 1;
             // Add current creep position to 'traversed' array in memory
@@ -164,7 +169,7 @@ module.exports.loop = function () {
 
     // Spawn a small harvester to (re)start the colony when needed
     if (creepsCount == 0) {
-        Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], 'rebootHarvester', { memory: { role: 'harvester' } });
+        Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], 'rebootHarvester', { memory: { role: 'harvesterReboot' } });
     }
         // Spawn extra creeps if necessary and possible - Only one can be spawned at the same time, priority goes from top to bottom
     else if (harvestersCount < desiredHarvestersCount) {

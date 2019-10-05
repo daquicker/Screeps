@@ -31,19 +31,31 @@ var roleHauler = {
             }
         }
 
-        // Creep is not ready to work, look for energy source container with at least carryCapacity / 2 energy stored and go there
+        // Creep is not ready to work, look for energy source container with at least carryCapacity / 2 energy stored or tombstone and go there
         else {
-            let threshold = creep.carryCapacity / 2;
-            let sourceContainers = []
-            for (let sourceContainerID of sourceContainerIDs) {
-                sourceContainers.push(Game.getObjectById(sourceContainerID));
+            // Find all tombstones in the room, if any
+            let tombstones = creep.room.find(FIND_TOMBSTONES);
+            // If at least one tombstone found, go there and harvest it for energy
+            if (tombstones.length != 0) {
+                let closestTombstone = creep.pos.findClosestByPath(tombstones);
+                if (creep.withdraw(closestTombstone, RESOURCE_ENERGY) != 0 && creep.ticksToLive > 50) {
+                    creep.moveTo(closestTombstone, { visualizePathStyle: { stroke: '#ffaa00' }, reusePath: 4 });
+                }
             }
-            let container = creep.pos.findClosestByPath(sourceContainers, {
-                filter: (structure) => structure.store[RESOURCE_ENERGY] >= threshold
-            });
-            // Try to harvest and check if creep has long enough left to live
-            if (creep.withdraw(container, RESOURCE_ENERGY) != 0 && creep.ticksToLive > 50) {
-                creep.moveTo(container, { visualizePathStyle: { stroke: '#ffaa00' }, reusePath: 4 });
+            // No tombstones in the room, find a source container to refill at
+            else {
+                let threshold = creep.carryCapacity / 2;
+                let sourceContainers = []
+                for (let sourceContainerID of sourceContainerIDs) {
+                    sourceContainers.push(Game.getObjectById(sourceContainerID));
+                }
+                let container = creep.pos.findClosestByPath(sourceContainers, {
+                    filter: (structure) => structure.store[RESOURCE_ENERGY] >= threshold
+                });
+                // Try to harvest and check if creep has long enough left to live
+                if (creep.withdraw(container, RESOURCE_ENERGY) != 0 && creep.ticksToLive > 50) {
+                    creep.moveTo(container, { visualizePathStyle: { stroke: '#ffaa00' }, reusePath: 4 });
+                }
             }
         }
     }

@@ -1,8 +1,8 @@
 module.exports = function () {
     StructureSpawn.prototype.createHaulerCreep =
         function (energy) {
-            // Get maximum number of CARRY and MOVE parts with given energy (2 to 1 ratio) - MOVE = 50, CARRY = 50
-            var maxParts = Math.floor(energy / 50);
+            // Get maximum number of CARRY and MOVE parts with given energy (2 to 1 ratio), but no more than 21 parts total - MOVE = 50, CARRY = 50
+            var maxParts = Math.min(Math.floor(energy / 50), 21);
             var maxCarryParts = Math.floor((maxParts / 3) * 2);
             var maxMoveParts = maxParts - maxCarryParts;
             var body = [];
