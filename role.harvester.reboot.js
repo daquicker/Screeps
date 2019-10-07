@@ -2,7 +2,7 @@ var roleBuilder = require('role.builder');
 
 var roleHarvesterReboot = {
 
-    run: function (creep, sourceIDs) {
+    run: function (creep, sources) {
 
         // Set memory.working to false if creep is working and out of energy
         if (creep.memory.working && creep.carry.energy == 0) {
@@ -30,18 +30,14 @@ var roleHarvesterReboot = {
                     creep.moveTo(target, { visualizePathStyle: { stroke: '#f24602' }, reusePath: 2 });
                 }
             }
-            // No resupply site found, run as upgrader
+                // No resupply site found, run as upgrader
             else {
                 roleBuilder.run(creep, containerIDs, sourceIDs);
             }
         }
 
-        // Creep is not ready to work, look for energy source and go there
+            // Creep is not ready to work, look for energy source and go there
         else {
-            let sources = [];
-            for (let sourceID of sourceIDs) {
-                sources.push(Game.getObjectById(sourceID));
-            }
             let source = creep.pos.findClosestByPath(sources);
             // Try to harvest and check if creep has long enough left to live
             if (creep.harvest(source) != 0 && creep.ticksToLive > 50) {
