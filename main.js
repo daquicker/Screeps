@@ -1,6 +1,5 @@
-require('prototype.spawn.averaged')();
-require('prototype.spawn.miner')();
-require('prototype.spawn.hauler')();
+require('prototype.spawn')();
+var updateContainers = require('update.containers');
 var roleBuilder = require('role.builder');
 var roleHarvester = require('role.harvester');
 var roleHarvesterReboot = require('role.harvester.reboot');
@@ -73,33 +72,11 @@ module.exports.loop = function () {
 
     // Update 'containerIDs', 'sourceContainerIDs' and 'reserveContainerIDs' arrays in room memory if enough cycles have passed
     if (Game.spawns['Spawn1'].room.memory.containerCheckCount > 200) {
-        Game.spawns['Spawn1'].room.memory.containerIDs = [];
-        Game.spawns['Spawn1'].room.memory.sourceContainerIDs = [];
-        Game.spawns['Spawn1'].room.memory.reserveContainerIDs = [];
-        let sources = []
-        for (let sourceID of Game.spawns['Spawn1'].room.memory.sourceIDs) {
-            sources.push(Game.getObjectById(sourceID));
-        }
-        let containers = Game.spawns['Spawn1'].room.find(FIND_STRUCTURES, {
-            filter: (structure) => structure.structureType == STRUCTURE_CONTAINER
-        });
-        for (let container of containers) {
-            let adjacentSources = container.pos.findInRange(sources, 1);
-        // Check if countainer is considered a sourceContainer
-            if (adjacentSources.length != 0) {
-                Game.spawns['Spawn1'].room.memory.sourceContainerIDs.push(container.id);
-                Game.spawns['Spawn1'].room.memory.containerIDs.push(container.id);
-            }
-                // Container is considered a reserve container
-            else {
-                Game.spawns['Spawn1'].room.memory.reserveContainerIDs.push(container.id);
-                Game.spawns['Spawn1'].room.memory.containerIDs.push(container.id);
-            }
-        }
+        updateContainers();
         // reset counter
         Game.spawns['Spawn1'].room.memory.containerCheckCount = 0
     }
-        // Else add up containerCheckCount by 1
+    // Else add up containerCheckCount by 1
     else {
         Game.spawns['Spawn1'].room.memory.containerCheckCount += 1;
     }
@@ -129,6 +106,9 @@ module.exports.loop = function () {
         sources.push(Game.getObjectById(sourceID));
     }
 
+    // Get maximum energy capacity in the room
+    var maxEnergy = Game.spawns['Spawn1'].room.energyCapacityAvailable;
+
     // Initialize variables to keep count of creeps per type
     var buildersCount = 0;
     var harvestersCount = 0;
@@ -147,7 +127,7 @@ module.exports.loop = function () {
             Game.spawns['Spawn1'].room.memory.traversed.push(creep.pos);
             roleBuilder.run(creep, containers, sources);
         }
-            // Only used to (re)start the colony
+        // Only used to (re)start the colony
         else if (creep.memory.role == 'harvesterReboot') {
             roleHarvesterReboot.run(creep, Game.spawns['Spawn1'].room.memory.sources);
         }
@@ -177,7 +157,7 @@ module.exports.loop = function () {
             haulersCount += 1;
             // Add current creep position to 'traversed' array in memory
             Game.spawns['Spawn1'].room.memory.traversed.push(creep.pos);
-            roleHauler.run(creep, sourceContainers, tombstones);
+            roleHauler.run(creep, sourceContainers, reserveContainers, tombstones);
         }
     }
 
@@ -209,9 +189,6 @@ module.exports.loop = function () {
     }
     var desiredRepairersCount = 1;
     var desiredUpgradersCount = 1;
-
-    // Get maximum energy capacity in the room
-    var maxEnergy = Game.spawns['Spawn1'].room.energyCapacityAvailable;
 
     // Spawn a small harvester to (re)start the colony when needed
     if (creepsCount == 0) {
