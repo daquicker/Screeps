@@ -1,1 +1,1 @@
-Scripts for the game "Screeps".
+Development branch, beware of broken code!
