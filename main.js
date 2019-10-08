@@ -72,7 +72,7 @@ module.exports.loop = function () {
 
     // Update 'containerIDs', 'sourceContainerIDs' and 'reserveContainerIDs' arrays in room memory if enough cycles have passed
     if (Game.spawns['Spawn1'].room.memory.containerCheckCount > 200) {
-        updateContainers();
+        updateContainers(Game.spawns['Spawn1'].room);
         // reset counter
         Game.spawns['Spawn1'].room.memory.containerCheckCount = 0
     }
