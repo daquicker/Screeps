@@ -1,3 +1,4 @@
+require('prototype.creep');
 var roleBuilder = require('role.builder');
 
 var roleRepairer = {
@@ -36,22 +37,11 @@ var roleRepairer = {
         else {
             // Check if containers are present in the room, if so, gather energy from closest container with enough energy stored
             if (containers.length != 0) {
-                let threshold = creep.carryCapacity;
-                let container = creep.pos.findClosestByPath(containers, {
-                    filter: (container) => container.store[RESOURCE_ENERGY] >= threshold
-                });
-                // Try to withdraw if creep has long enough left to live
-                if (creep.withdraw(container, RESOURCE_ENERGY) != 0 && creep.ticksToLive > 50) {
-                    creep.moveTo(container, { visualizePathStyle: { stroke: '#ffaa00' }, reusePath: 4 });
-                }
+                creep.goWithdraw(containers);
             }
             // No containers in the room, find closest energy source to harvest
             else {
-                let source = creep.pos.findClosestByPath(sources);
-                // Try to harvest and check if creep has long enough left to live
-                if (creep.harvest(source) != 0 && creep.ticksToLive > 50) {
-                    creep.moveTo(source, { visualizePathStyle: { stroke: '#ffaa00' }, reusePath: 2 });
-                }
+                creep.goHarvest(sources);
             }
         }
     }
