@@ -23,7 +23,7 @@ var constrRoadsRep = {
                 if (count > threshold) {
                     console.log('building road at: ', prev);
                     prev = JSON.parse(prev);
-                    Game.spawns[spawn].room.createConstructionSite(prev.x, prev.y, STRUCTURE_ROAD);
+                    spawn.room.createConstructionSite(prev.x, prev.y, STRUCTURE_ROAD);
                 }
                 // Reset count and prev variables
                 count = 0;
