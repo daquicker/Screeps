@@ -41,7 +41,7 @@ var roleHarvesterLong = {
             if (creep.room.name == creep.memory.targetRoomName) {
                 let sources = creep.room.find(FIND_SOURCES, {
                     filter: (source) => {
-                        return source.energy > creep.carryCapacity ||
+                        return source.energy >= (creep.carryCapacity - creep.carry.energy) ||
                                source.ticksToRegeneration < 40;
                     }
             });
