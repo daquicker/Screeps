@@ -1,9 +1,9 @@
 var constrRoadsRep = {
 
-    run: function (traversed, spawn) {
+    run: function (traversed, traversedCount, spawn) {
         // Turn array of objects into array of strings for sorting
         console.log('Check roadbuilding');
-        for (let ind = 0; ind < traversed.length; ind++) {
+        for (let ind = 0; ind < traversedCount; ind++) {
             traversed[ind] = JSON.stringify(traversed[ind]);
         }
         // Sort array of strings
@@ -13,7 +13,7 @@ var constrRoadsRep = {
         let prev = traversed[0];
         // Value above which a new road should be constructed
         let threshold = 25;
-        for (let ind = 1; ind < traversed.length; ind++) {
+        for (let ind = 1; ind < traversedCount; ind++) {
             if (prev == traversed[ind]) {
                 count++;
                 prev = traversed[ind];
@@ -23,7 +23,7 @@ var constrRoadsRep = {
                 if (count > threshold) {
                     console.log('building road at: ', prev);
                     prev = JSON.parse(prev);
-                    Game.spawns[spawn].room.createConstructionSite(prev.x, prev.y, STRUCTURE_ROAD);
+                    spawn.room.createConstructionSite(prev.x, prev.y, STRUCTURE_ROAD);
                 }
                 // Reset count and prev variables
                 count = 0;

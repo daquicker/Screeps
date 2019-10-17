@@ -1,9 +1,9 @@
 require('prototype.creep');
 var roleBuilder = require('role.builder');
 
-var roleHarvester = {
+var roleHarvesterReboot = {
 
-    run: function (creep, sourceContainers, sources) {
+    run: function (creep, containers, sources) {
 
         // Set memory.working to false if creep is working and out of energy
         if (creep.memory.working && creep.carry.energy == 0) {
@@ -22,8 +22,7 @@ var roleHarvester = {
             let target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                 filter: (structure) => {
                     return (structure.structureType == STRUCTURE_EXTENSION ||
-                    structure.structureType == STRUCTURE_SPAWN ||
-                    structure.structureType == STRUCTURE_TOWER) &&
+                    structure.structureType == STRUCTURE_SPAWN) &&
                     structure.energy < structure.energyCapacity;
                 }
             });
@@ -32,24 +31,17 @@ var roleHarvester = {
                     creep.moveTo(target, { visualizePathStyle: { stroke: '#f24602' }, reusePath: 2 });
                 }
             }
-                // No resupply site found, run as upgrader
+            // No resupply site found, run as builder
             else {
                 roleBuilder.run(creep, containers, sources);
             }
         }
 
-        // Creep is not ready to work, look for energy source/container and go there
+        // Creep is not ready to work, look for energy source and go there
         else {
-            // Check if containers are present in the room, if so, gather energy from closest container with enough energy stored
-            if (sourceContainers.length != 0) {
-                creep.goWithdraw(sourceContainers);
-            }
-            // No containers in the room, find closest energy source to harvest
-            else {
-                creep.goHarvest(sources);
-            }
+            creep.goHarvest(sources);
         }
     }
 };
 
-module.exports = roleHarvester;
+module.exports = roleHarvesterReboot;

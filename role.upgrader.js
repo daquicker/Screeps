@@ -1,6 +1,7 @@
+require('prototype.creep');
 var roleUpgrader = {
 
-    run: function (creep) {
+    run: function (creep, containers, sources) {
 
         // Set memory.working to false if creep is working and out of energy
         if (creep.memory.working && creep.carry.energy == 0) {
@@ -21,12 +22,15 @@ var roleUpgrader = {
             }
         }
 
-            // Creep is not ready to work, look for energy source and go there
+        // Creep is not ready to work, look for energy source/container and go there
         else {
-            let sources = creep.room.find(FIND_SOURCES);
-            // Try to harvest and check if creep has long enough left to live
-            if (creep.harvest(sources[3]) != 0 && creep.ticksToLive > 50) {
-                creep.moveTo(sources[3], { visualizePathStyle: { stroke: '#ffaa00' }, reusePath: 2 });
+            // Check if containers are present in the room, if so, gather energy from closest container with enough energy stored
+            if (containers.length != 0) {
+                creep.goWithdraw(containers);
+            }
+            // No containers in the room, find closest energy source to harvest
+            else {
+                creep.goHarvest(sources);
             }
         }
     }
