@@ -73,4 +73,12 @@ module.exports = function () {
             let creepName = roleName + Game.time;
             return this.spawnCreep(body, creepName, { memory: { role: roleName, working: false, home: homeParam, targetRoomName: targetRoomNameParam } });
         };
+
+    StructureSpawn.prototype.createScoutCreep =
+        function (roleName, homeParam) {
+            // Creep only consists of 1 MOVE part - MOVE = 50
+            var body = [MOVE];
+            let creepName = roleName + Game.time;
+            return this.spawnCreep(body, creepName, { memory: { role: roleName, home: homeParam } });
+        };
 };

@@ -31,9 +31,7 @@ var roleHarvesterLong = {
             }
             // Creep is not in the correct room, return home
             else {
-                let exitDir = Game.map.findExit(creep.room, creep.memory.home);
-                let exit = creep.pos.findClosestByPath(exitDir);
-                creep.moveTo(exit, { visualizePathStyle: { stroke: '#f24602' }, reusePath: 10 });
+                creep.moveToRoom(creep.room, creep.memory.home);
             }
         }
 
@@ -51,9 +49,7 @@ var roleHarvesterLong = {
             }
             // creep is not in the correct room, move to correct room
             else {
-                let exitDir = Game.map.findExit(creep.room, creep.memory.targetRoomName);
-                let exit = creep.pos.findClosestByPath(exitDir);
-                creep.moveTo(exit, { visualizePathStyle: { stroke: '#f24602' }, reusePath: 6 });
+                creep.moveToRoom(creep.room, creep.memory.targetRoomName);
             }
         }
     }

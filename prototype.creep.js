@@ -16,3 +16,9 @@ Creep.prototype.goHarvest = function (sources) {
         this.moveTo(source, { visualizePathStyle: { stroke: '#ffaa00' }, reusePath: 2 });
     }
 };
+
+Creep.prototype.moveToRoom = function (currentRoom, targetRoom) {
+    let exitDir = Game.map.findExit(currentRoom, targetRoom);
+    let exit = this.pos.findClosestByPath(exitDir);
+    this.moveTo(exit, { visualizePathStyle: { stroke: '#f24602' }, resupath: 10 });
+};
