@@ -1,6 +1,5 @@
 require('prototype.spawn')();
-var constrRoads = require('construction.roads.init');
-var constrRoadsRep = require('construction.roads.repeat');
+var constrRoads = require('construction.roads');
 var memoryRoomInit = require('memory.room.init');
 var roleBuilder = require('role.builder');
 var roleHarvester = require('role.harvester');
@@ -32,7 +31,7 @@ module.exports.loop = function () {
 
     // Order initial roads if not done before
     if (!roomSpawn.room.memory.initializedRoad) {
-        constrRoads.run(roomSpawn, roomSpawn.room.memory.sourceIDs);
+        constrRoads.init(roomSpawn, roomSpawn.room.memory.sourceIDs);
         roomSpawn.room.memory.initializedRoad = 1;
     }
 
@@ -143,15 +142,15 @@ module.exports.loop = function () {
         }
     }
 
-    // Store total number of owned creeps (except miners and scouts) in a variable
+    // Store total number of creeps used in roadbuilding in a variable
     var creepsCount = buildersCount + harvestersCount + repairersCount + upgradersCount + haulersCount;
 
-    // Add up number of creeps currently alive to keep track of how many data points are stored in 'traversed' array - each creep adds one data point per cycle
+    // Add up 'creepsCount' to keep track of how many data points are stored in 'traversed' array
     roomSpawn.room.memory.traversedCount += creepsCount;
 
     // Run logic governing additional road building if enough data points have been gathered in 'traversed' array in memory
     if (roomSpawn.room.memory.traversedCount >= 1000) {
-        constrRoadsRep.run(roomSpawn.room.memory.traversed, roomSpawn.room.memory.traversedCount, roomSpawn);
+        constrRoads.repeat(roomSpawn.room.memory.traversed, roomSpawn.room.memory.traversedCount, roomSpawn);
         // Reset 'traversed' array
         roomSpawn.room.memory.traversed = [];
         // Reset traversedCount

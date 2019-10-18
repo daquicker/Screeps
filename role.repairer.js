@@ -27,7 +27,7 @@ var roleRepairer = {
                     creep.moveTo(closestDamagedStructure.pos, { visualizePathStyle: { stroke: '#37ff14' }, reusePath: 2 });
                 }
             }
-                // No repair site found, run as upgrader
+            // No repair site found, run as upgrader
             else {
                 roleBuilder.run(creep, containers, sources);
             }
