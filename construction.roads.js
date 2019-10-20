@@ -1,6 +1,19 @@
-var constrRoadsRep = {
+var constrRoads = {
 
-    run: function (traversed, traversedCount, spawn) {
+    init: function (spawn, sourceIDs) {
+        let sources = []
+        for (let sourceID of sourceIDs) {
+            sources.push(Game.getObjectById(sourceID));
+        }
+        for (let source of sources) {
+            let path = spawn.pos.findPathTo(source.pos, { range: 1, swampCost: 1, ignoreCreeps: 1 });
+            for (let tile of path) {
+                spawn.room.createConstructionSite(tile.x, tile.y, STRUCTURE_ROAD);
+            }
+        }
+    },
+
+    repeat: function (traversed, traversedCount, spawn) {
         // Turn array of objects into array of strings for sorting
         console.log('Check roadbuilding');
         for (let ind = 0; ind < traversedCount; ind++) {
@@ -33,4 +46,4 @@ var constrRoadsRep = {
     }
 };
 
-module.exports = constrRoadsRep;
+module.exports = constrRoads;

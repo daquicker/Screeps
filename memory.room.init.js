@@ -33,6 +33,11 @@ var memoryRoomInit = {
             if (!currentRoom.memory.roomNameW) {
                 currentRoom.memory.roomNameW = adjRoomNames.west(currentRoom);
             }
+
+            // Set 'mainRoom' Boolean in room memory if it doesn't exist yet
+            if (!currentRoom.memory.mainRoom) {
+                currentRoom.memory.mainRoom = true;
+            }
         }
         // Set memory entries needed in all rooms in (future) use
         // Initialize empty 'sourceContainerIDs' array in room memory if it doesn't exist yet

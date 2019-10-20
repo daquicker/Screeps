@@ -11,12 +11,12 @@ module.exports = function updateContainers(roomParam) {
     });
     for (let container of containers) {
         let adjacentSources = container.pos.findInRange(sources, 1);
-    // Check if countainer is considered a sourceContainer
+        // Check if countainer is considered a sourceContainer
         if (adjacentSources.length != 0) {
             roomParam.memory.sourceContainerIDs.push(container.id);
             roomParam.memory.containerIDs.push(container.id);
         }
-            // Container is considered a reserve container
+        // Container is considered a reserve container
         else {
             roomParam.memory.reserveContainerIDs.push(container.id);
             roomParam.memory.containerIDs.push(container.id);

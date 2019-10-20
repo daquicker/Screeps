@@ -1,6 +1,5 @@
 require('prototype.spawn')();
-var constrRoads = require('construction.roads.init');
-var constrRoadsRep = require('construction.roads.repeat');
+var constrRoads = require('construction.roads');
 var memoryRoomInit = require('memory.room.init');
 var roleBuilder = require('role.builder');
 var roleHarvester = require('role.harvester');
@@ -16,7 +15,7 @@ var updateContainers = require('update.containers');
 
 
 module.exports.loop = function () {
-    
+
     // Remove dead creeps from memory
     for (let name in Memory.creeps) {
         if (Game.creeps[name] == undefined) {
@@ -32,7 +31,7 @@ module.exports.loop = function () {
 
     // Order initial roads if not done before
     if (!roomSpawn.room.memory.initializedRoad) {
-        constrRoads.run(roomSpawn, roomSpawn.room.memory.sourceIDs);
+        constrRoads.init(roomSpawn, roomSpawn.room.memory.sourceIDs);
         roomSpawn.room.memory.initializedRoad = 1;
     }
 
@@ -48,7 +47,7 @@ module.exports.loop = function () {
         // reset counter
         roomSpawn.room.memory.containerCheckCount = 0
     }
-    // Else add up containerCheckCount by 1
+        // Else add up containerCheckCount by 1
     else {
         roomSpawn.room.memory.containerCheckCount += 1;
     }
@@ -84,7 +83,6 @@ module.exports.loop = function () {
     // Initialize variables to keep count of creeps per type
     var buildersCount = 0;
     var harvestersCount = 0;
-    var harvestersLongCount = 0;
     var repairersCount = 0;
     var upgradersCount = 0;
     var minersCount = 0;
@@ -101,7 +99,7 @@ module.exports.loop = function () {
             roomSpawn.room.memory.traversed.push(creep.pos);
             roleBuilder.run(creep, containers, sources);
         }
-        // Only used to (re)start the colony
+            // Only used to (re)start the colony
         else if (creep.memory.role == 'harvesterReboot') {
             roleHarvesterReboot.run(creep, containers, sources);
         }
@@ -112,7 +110,6 @@ module.exports.loop = function () {
             roleHarvester.run(creep, sourceContainers, sources);
         }
         else if (creep.memory.role == 'harvesterLong') {
-            harvestersLongCount += 1;
             roleHarvesterLong.run(creep, containers);
         }
         else if (creep.memory.role == 'repairer') {
@@ -143,15 +140,15 @@ module.exports.loop = function () {
         }
     }
 
-    // Store total number of owned creeps (except miners and scouts) in a variable
+    // Store total number of creeps used in roadbuilding in a variable
     var creepsCount = buildersCount + harvestersCount + repairersCount + upgradersCount + haulersCount;
 
-    // Add up number of creeps currently alive to keep track of how many data points are stored in 'traversed' array - each creep adds one data point per cycle
+    // Add up 'creepsCount' to keep track of how many data points are stored in 'traversed' array
     roomSpawn.room.memory.traversedCount += creepsCount;
 
     // Run logic governing additional road building if enough data points have been gathered in 'traversed' array in memory
     if (roomSpawn.room.memory.traversedCount >= 1000) {
-        constrRoadsRep.run(roomSpawn.room.memory.traversed, roomSpawn.room.memory.traversedCount, roomSpawn);
+        constrRoads.repeat(roomSpawn.room.memory.traversed, roomSpawn.room.memory.traversedCount, roomSpawn);
         // Reset 'traversed' array
         roomSpawn.room.memory.traversed = [];
         // Reset traversedCount
@@ -170,9 +167,8 @@ module.exports.loop = function () {
     }
     var desiredRepairersCount = 1;
     var desiredUpgradersCount = 1;
-    var desiredHarvestersLongCount = 3;
     let adjRoomNameW = roomSpawn.room.memory.roomNameW;
-    if ((roomSpawn.room.controller.level > 2) && !Memory.rooms[adjRoomNameW]){
+    if ((roomSpawn.room.controller.level > 2) && !Memory.rooms[adjRoomNameW]) {
         var desiredScoutsCount = 1;
     }
     else {
@@ -183,7 +179,7 @@ module.exports.loop = function () {
     if (creepsCount == 0) {
         roomSpawn.spawnCreep([WORK, CARRY, MOVE], 'rebootHarvester', { memory: { role: 'harvesterReboot' } });
     }
-    // Spawn extra creeps if necessary and possible - Only one can be spawned at the same time, priority goes from top to bottom
+        // Spawn extra creeps if necessary and possible - Only one can be spawned at the same time, priority goes from top to bottom
     else if (harvestersCount < desiredHarvestersCount) {
         roomSpawn.createAveragedCreep(maxEnergy, 'harvester');
     }
@@ -199,9 +195,6 @@ module.exports.loop = function () {
     else if (upgradersCount < desiredUpgradersCount) {
         roomSpawn.createAveragedCreep(maxEnergy, 'upgrader');
     }
-    else if (harvestersLongCount < desiredHarvestersLongCount) {
-        roomSpawn.createHarvesterLongCreep(maxEnergy, 'harvesterLong', roomSpawn.room.name, roomSpawn.room.memory.roomNameN);
-    }
     else if (scoutsCount < desiredScoutsCount) {
         roomSpawn.createScoutCreep('scout', roomSpawn.room.name);
     }
@@ -209,7 +202,7 @@ module.exports.loop = function () {
     // Check if each source in the room has a dedicated miner creep alive and spawn a new one if needed
     for (let sourceID of roomSpawn.room.memory.sourceIDs) {
         // Find miner with sourceID in memory
-        let miner = _.filter(Game.creeps, i => i.memory.sourceID == sourceID);
+        let miner = _.filter(Game.creeps, (creep) => creep.memory.sourceID == sourceID);
         // Check if any miner with sourceID in memory was found
         if (miner.length < 1) {
             let source = Game.getObjectById(sourceID);
@@ -219,6 +212,17 @@ module.exports.loop = function () {
                 if (adjacentContainers.length != 0) {
                     roomSpawn.createMinerCreep(maxEnergy, sourceID, adjacentContainers[0].id);
                 }
+            }
+        }
+    }
+
+    // Check if each room that isn't a main room has enough long distance harvester creeps targeted at it
+    for (let currentRoomName in Memory.rooms) {
+        let targetRoomMemory = Memory.rooms[currentRoomName];
+        if (!targetRoomMemory.mainRoom) {
+            let harvestersLong = _.filter(Game.creeps, (creep) => creep.memory.targetRoomName == currentRoomName);
+            if (harvestersLong.length < (targetRoomMemory.sourceIDs.length * 2)) {
+                roomSpawn.createHarvesterLongCreep(maxEnergy, 'harvesterLong', roomSpawn.room.name, currentRoomName);
             }
         }
     }
