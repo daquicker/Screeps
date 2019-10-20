@@ -47,7 +47,7 @@ module.exports.loop = function () {
         // reset counter
         roomSpawn.room.memory.containerCheckCount = 0
     }
-        // Else add up containerCheckCount by 1
+    // Else add up containerCheckCount by 1
     else {
         roomSpawn.room.memory.containerCheckCount += 1;
     }
@@ -175,6 +175,23 @@ module.exports.loop = function () {
         var desiredScoutsCount = 0;
     }
 
+    // Check if each source in the room has a dedicated miner creep alive and spawn a new one if needed
+    for (let sourceID of roomSpawn.room.memory.sourceIDs) {
+        // Find miner with sourceID in memory
+        let miner = _.filter(Game.creeps, (creep) => creep.memory.sourceID == sourceID);
+        // Check if any miner with sourceID in memory was found
+        if (miner.length < 1) {
+            let source = Game.getObjectById(sourceID);
+            // Check if any containers found adjacent to source, if so, spawn new miner creep
+            if (sourceContainers.length != 0) {
+                let adjacentContainers = source.pos.findInRange(sourceContainers, 1);
+                if (adjacentContainers.length != 0) {
+                    roomSpawn.createMinerCreep(maxEnergy, sourceID, adjacentContainers[0].id);
+                }
+            }
+        }
+    }
+
     // Spawn a small harvester to (re)start the colony when needed
     if (creepsCount == 0) {
         roomSpawn.spawnCreep([WORK, CARRY, MOVE], 'rebootHarvester', { memory: { role: 'harvesterReboot' } });
@@ -198,31 +215,15 @@ module.exports.loop = function () {
     else if (scoutsCount < desiredScoutsCount) {
         roomSpawn.createScoutCreep('scout', roomSpawn.room.name);
     }
-
-    // Check if each source in the room has a dedicated miner creep alive and spawn a new one if needed
-    for (let sourceID of roomSpawn.room.memory.sourceIDs) {
-        // Find miner with sourceID in memory
-        let miner = _.filter(Game.creeps, (creep) => creep.memory.sourceID == sourceID);
-        // Check if any miner with sourceID in memory was found
-        if (miner.length < 1) {
-            let source = Game.getObjectById(sourceID);
-            // Check if any containers found adjacent to source, if so, spawn new miner creep
-            if (sourceContainers.length != 0) {
-                let adjacentContainers = source.pos.findInRange(sourceContainers, 1);
-                if (adjacentContainers.length != 0) {
-                    roomSpawn.createMinerCreep(maxEnergy, sourceID, adjacentContainers[0].id);
+    else {
+        // Check if each room that isn't a main room has enough long distance harvester creeps targeted at it
+        for (let currentRoomName in Memory.rooms) {
+            let targetRoomMemory = Memory.rooms[currentRoomName];
+            if (!targetRoomMemory.mainRoom) {
+                let harvestersLong = _.filter(Game.creeps, (creep) => creep.memory.targetRoomName == currentRoomName);
+                if (harvestersLong.length < (targetRoomMemory.sourceIDs.length * 2)) {
+                    roomSpawn.createHarvesterLongCreep(maxEnergy, 'harvesterLong', roomSpawn.room.name, currentRoomName);
                 }
-            }
-        }
-    }
-
-    // Check if each room that isn't a main room has enough long distance harvester creeps targeted at it
-    for (let currentRoomName in Memory.rooms) {
-        let targetRoomMemory = Memory.rooms[currentRoomName];
-        if (!targetRoomMemory.mainRoom) {
-            let harvestersLong = _.filter(Game.creeps, (creep) => creep.memory.targetRoomName == currentRoomName);
-            if (harvestersLong.length < (targetRoomMemory.sourceIDs.length * 2)) {
-                roomSpawn.createHarvesterLongCreep(maxEnergy, 'harvesterLong', roomSpawn.room.name, currentRoomName);
             }
         }
     }
