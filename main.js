@@ -29,12 +29,6 @@ module.exports.loop = function () {
     // Run memory init for the room
     memoryRoomInit.run(true, roomSpawn.room);
 
-    // Order initial roads if not done before
-    if (!roomSpawn.room.memory.initializedRoad) {
-        constrRoads.init(roomSpawn, roomSpawn.room.memory.sourceIDs);
-        roomSpawn.room.memory.initializedRoad = 1;
-    }
-
     // Get towers and run them
     var towers = _.filter(Game.structures, (structure) => structure.structureType == STRUCTURE_TOWER);
     for (let tower of towers) {
@@ -79,6 +73,12 @@ module.exports.loop = function () {
 
     // Get maximum energy capacity in the room
     var maxEnergy = roomSpawn.room.energyCapacityAvailable;
+
+    // Order initial roads if not done before
+    if (!roomSpawn.room.memory.initializedRoad) {
+        constrRoads.init(roomSpawn, sources);
+        roomSpawn.room.memory.initializedRoad = 1;
+    }
 
     // Initialize variables to keep count of creeps per type
     var buildersCount = 0;
@@ -153,11 +153,20 @@ module.exports.loop = function () {
         roomSpawn.room.memory.traversed = [];
         // Reset traversedCount
         roomSpawn.room.memory.traversedCount = 0;
+        // Check if roads to room exits need to be built
+        if (roomSpawn.room.controller.level > 3) {
+            for (let currentRoomName in Memory.rooms) {
+                let targetRoomMemory = Memory.rooms[currentRoomName];
+                if (!targetRoomMemory.mainRoom && (targetRoomMemory.sourceIDs.length != 0)) {
+                    constrRoads.exitRoad(roomSpawn, currentRoomName, targetRoomMemory.sourceIDs[0]);
+                }
+            }
+        }
     }
 
     // Set desired number of creeps per role
     var desiredBuildersCount = 1;
-    if (minersCount < 1) {
+    if (sourceContainers.length < 1) {
         var desiredHarvestersCount = 2;
         var desiredHaulersCount = 0;
     }

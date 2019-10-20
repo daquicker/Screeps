@@ -32,9 +32,9 @@ var roleHarvester = {
                     creep.moveTo(target, { visualizePathStyle: { stroke: '#f24602' }, reusePath: 2 });
                 }
             }
-                // No resupply site found, run as upgrader
+            // No resupply site found, run as upgrader
             else {
-                roleBuilder.run(creep, containers, sources);
+                roleBuilder.run(creep, sourceContainers, sources);
             }
         }
 
