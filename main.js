@@ -154,8 +154,8 @@ module.exports.loop = function () {
         // Reset traversedCount
         roomSpawn.room.memory.traversedCount = 0;
         // Check if roads to room exits need to be built
-        if (!roomSpawn.memory.exitRoadsBuilt && (roomSpawn.room.controller.level > 3)) {
-            roomSpawn.memory.exitRoadsBuilt = 1;
+        if (!roomSpawn.room.memory.exitRoadsBuilt && (roomSpawn.room.controller.level > 3)) {
+            roomSpawn.room.memory.exitRoadsBuilt = 1;
             for (let currentRoomName in Memory.rooms) {
                 let targetRoomMemory = Memory.rooms[currentRoomName];
                 if (!targetRoomMemory.mainRoom && (targetRoomMemory.sourceIDs.length != 0)) {
@@ -175,7 +175,12 @@ module.exports.loop = function () {
         var desiredHarvestersCount = 0;
         var desiredHaulersCount = 2;
     }
-    var desiredRepairersCount = 1;
+    if (towers.length < 1) {
+        var desiredRepairersCount = 1;
+    }
+    else {
+        var desiredRepairersCount = 0;
+    }
     var desiredUpgradersCount = 1;
     let adjRoomNameW = roomSpawn.room.memory.roomNameW;
     if ((roomSpawn.room.controller.level > 2) && !Memory.rooms[adjRoomNameW]) {
