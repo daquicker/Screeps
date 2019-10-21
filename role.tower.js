@@ -1,7 +1,7 @@
 var roleTower = {
 
     run: function (tower) {
-        var DamagedStructures = tower.pos.findInRange(FIND_STRUCTURES, 10, {
+        var DamagedStructures = tower.pos.findInRange(FIND_STRUCTURES, 30, {
             filter: (structure) => structure.hits < structure.hitsMax
         });
         if (DamagedStructures) {

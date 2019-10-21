@@ -154,7 +154,8 @@ module.exports.loop = function () {
         // Reset traversedCount
         roomSpawn.room.memory.traversedCount = 0;
         // Check if roads to room exits need to be built
-        if (roomSpawn.room.controller.level > 3) {
+        if (!roomSpawn.memory.exitRoadsBuilt && (roomSpawn.room.controller.level > 3)) {
+            roomSpawn.memory.exitRoadsBuilt = 1;
             for (let currentRoomName in Memory.rooms) {
                 let targetRoomMemory = Memory.rooms[currentRoomName];
                 if (!targetRoomMemory.mainRoom && (targetRoomMemory.sourceIDs.length != 0)) {
