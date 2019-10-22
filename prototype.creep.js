@@ -10,7 +10,9 @@ Creep.prototype.goWithdraw = function (containers) {
 };
 
 Creep.prototype.goHarvest = function (sources) {
-    let source = this.pos.findClosestByPath(sources);
+    let source = this.pos.findClosestByPath(sources, {
+        filter: (source) => source.energy >= (this.carryCapacity - this.carry.energy)
+    });
     // Try to harvest and check if creep has long enough left to live
     if (this.harvest(source) != 0 && this.ticksToLive > 50) {
         this.moveTo(source, { visualizePathStyle: { stroke: '#ffaa00' }, reusePath: 2 });

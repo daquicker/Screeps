@@ -41,7 +41,7 @@ module.exports.loop = function () {
         // reset counter
         roomSpawn.room.memory.containerCheckCount = 0
     }
-    // Else add up containerCheckCount by 1
+        // Else add up containerCheckCount by 1
     else {
         roomSpawn.room.memory.containerCheckCount += 1;
     }
@@ -85,7 +85,6 @@ module.exports.loop = function () {
     var harvestersCount = 0;
     var repairersCount = 0;
     var upgradersCount = 0;
-    var minersCount = 0;
     var haulersCount = 0;
     var scoutsCount = 0;
 
@@ -101,6 +100,7 @@ module.exports.loop = function () {
         }
             // Only used to (re)start the colony
         else if (creep.memory.role == 'harvesterReboot') {
+            harvestersCount += 1;
             roleHarvesterReboot.run(creep, containers, sources);
         }
         else if (creep.memory.role == 'harvester') {
@@ -125,7 +125,6 @@ module.exports.loop = function () {
             roleUpgrader.run(creep, containers, sources);
         }
         else if (creep.memory.role == 'miner') {
-            minersCount += 1;
             roleMiner.run(creep);
         }
         else if (creep.memory.role == 'hauler') {
@@ -166,9 +165,9 @@ module.exports.loop = function () {
     }
 
     // Set desired number of creeps per role
-    var desiredBuildersCount = 1;
+    var desiredBuildersCount = 2;
     if (sourceContainers.length < 1) {
-        var desiredHarvestersCount = 2;
+        var desiredHarvestersCount = 5;
         var desiredHaulersCount = 0;
     }
     else {
@@ -192,9 +191,9 @@ module.exports.loop = function () {
 
     // Check if each source in the room has a dedicated miner creep alive and spawn a new one if needed
     for (let sourceID of roomSpawn.room.memory.sourceIDs) {
-        // Find miner with sourceID in memory
+    // Find miner with sourceID in memory
         let miner = _.filter(Game.creeps, (creep) => creep.memory.sourceID == sourceID);
-        // Check if any miner with sourceID in memory was found
+    // Check if any miner with sourceID in memory was found
         if (miner.length < 1) {
             let source = Game.getObjectById(sourceID);
             // Check if any containers found adjacent to source, if so, spawn new miner creep
