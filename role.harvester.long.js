@@ -24,9 +24,7 @@ var roleHarvesterLong = {
                     filter: (structure) => structure.store[RESOURCE_ENERGY] < structure.storeCapacity
                 });
                 if (target) {
-                    if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(target, { visualizePathStyle: { stroke: '#f24602' }, reusePath: 4 });
-                    }
+                    creep.goTransfer(target);
                 }
             }
             // Creep is not in the correct room, return home

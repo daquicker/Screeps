@@ -1,3 +1,4 @@
+require('prototype.creep');
 var roleHauler = {
 
     run: function (creep, sourceContainers, reserveContainers, tombstones) {
@@ -25,9 +26,7 @@ var roleHauler = {
                 }
             });
             if (target) {
-                if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target, { visualizePathStyle: { stroke: '#f24602' }, reusePath: 4 });
-                }
+                creep.goTransfer(target);
             }
             else {
                 target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
@@ -37,9 +36,7 @@ var roleHauler = {
                     }
                 });
                 if (target) {
-                    if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(target, { visualizePathStyle: { stroke: '#f24602' }, reusePath: 4 });
-                    }
+                    creep.goTransfer(target);
                 }
             }
         }

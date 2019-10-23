@@ -167,7 +167,7 @@ module.exports.loop = function () {
     // Set desired number of creeps per role
     var desiredBuildersCount = 2;
     if (sourceContainers.length < 1) {
-        var desiredHarvestersCount = 5;
+        var desiredHarvestersCount = 4;
         var desiredHaulersCount = 0;
     }
     else {

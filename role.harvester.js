@@ -19,22 +19,32 @@ var roleHarvester = {
 
         // If creep is ready to work, look for work and go there
         if (creep.memory.working) {
+            // Look for spawn/extensions that need energy
             let target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                 filter: (structure) => {
                     return (structure.structureType == STRUCTURE_EXTENSION ||
-                    structure.structureType == STRUCTURE_SPAWN ||
-                    structure.structureType == STRUCTURE_TOWER) &&
+                    structure.structureType == STRUCTURE_SPAWN) &&
                     structure.energy < structure.energyCapacity;
                 }
             });
             if (target) {
-                if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target, { visualizePathStyle: { stroke: '#f24602' }, reusePath: 2 });
-                }
+                creep.goTransfer(target);
             }
-            // No resupply site found, run as upgrader
             else {
-                roleBuilder.run(creep, sourceContainers, sources);
+                // No spawn/extension needs energy, look for towers that need energy
+                let target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                    filter: (structure) => {
+                        return (structure.structureType == STRUCTURE_TOWER) &&
+                        structure.energy < structure.energyCapacity;
+                    }
+                });
+                if (target) {
+                    creep.goTransfer(target);
+                }
+                // No resupply site found, run as upgrader
+                else {
+                    roleBuilder.run(creep, sourceContainers, sources);
+                }
             }
         }
 

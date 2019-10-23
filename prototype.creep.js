@@ -19,6 +19,12 @@ Creep.prototype.goHarvest = function (sources) {
     }
 };
 
+Creep.prototype.goTransfer = function (target) {
+    if (this.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+        this.moveTo(target, { visualizePathStyle: { stroke: '#f24602' }, reusePath: 4 });
+    }
+};
+
 Creep.prototype.moveToRoom = function (currentRoom, targetRoom) {
     let exitDir = Game.map.findExit(currentRoom, targetRoom);
     let exit = this.pos.findClosestByPath(exitDir);

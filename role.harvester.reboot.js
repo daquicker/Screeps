@@ -27,9 +27,7 @@ var roleHarvesterReboot = {
                 }
             });
             if (target) {
-                if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target, { visualizePathStyle: { stroke: '#f24602' }, reusePath: 2 });
-                }
+                creep.goTransfer(target);
             }
             // No resupply site found, run as builder
             else {
