@@ -60,12 +60,23 @@ var memoryRoomInit = {
             currentRoom.memory.containerCheckCount = 0;
         }
 
+        // Get sources in the room and set them in a variable
+        var sources = currentRoom.find(FIND_SOURCES);
+
         // Set 'sourceIDs' array in room memory if it doesn't exist yet
         if (!currentRoom.memory.sourceIDs) {
             currentRoom.memory.sourceIDs = [];
-            let sources = currentRoom.find(FIND_SOURCES);
             for (let ind in sources) {
                 currentRoom.memory.sourceIDs.push(sources[ind].id);
+            }
+        }
+
+        // Set amount of open spaces around sources in the room in memory if it doesn't exist yet
+        if (!currentRoom.memory.openSourceFields) {
+            currentRoom.memory.openSourceFields = 0;
+            for (let source of sources) {
+                var fields = currentRoom.lookForAtArea(LOOK_TERRAIN, source.pos.y - 1, source.pos.x - 1, source.pos.y + 1, source.pos.x + 1, true);
+                currentRoom.memory.openSourceFields += 9 - _.countBy(fields, "terrain").wall;
             }
         }
     }

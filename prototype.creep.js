@@ -15,7 +15,7 @@ Creep.prototype.goHarvest = function (sources) {
     });
     // Try to harvest and check if creep has long enough left to live
     if (this.harvest(source) != 0 && this.ticksToLive > 50) {
-        this.moveTo(source, { visualizePathStyle: { stroke: '#ffaa00' }, reusePath: 2 });
+        this.moveTo(source, { visualizePathStyle: { stroke: '#ffaa00' }, reusePath: 2, maxOps: 4000 });
     }
 };
 
@@ -28,5 +28,5 @@ Creep.prototype.goTransfer = function (target) {
 Creep.prototype.moveToRoom = function (currentRoom, targetRoom) {
     let exitDir = Game.map.findExit(currentRoom, targetRoom);
     let exit = this.pos.findClosestByPath(exitDir);
-    this.moveTo(exit, { visualizePathStyle: { stroke: '#f24602' }, resupath: 10 });
+    this.moveTo(exit, { visualizePathStyle: { stroke: '#f28602' }, resupath: 10 });
 };

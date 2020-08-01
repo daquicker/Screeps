@@ -1,7 +1,7 @@
 require('prototype.creep');
 var roleHauler = {
 
-    run: function (creep, sourceContainers, reserveContainers, tombstones) {
+    run: function (creep, sourceContainers, reserveContainers, tombstones, droppedResources) {
 
         // Set memory.working to false if creep is working and out of energy
         if (creep.memory.working && creep.carry.energy == 0) {
@@ -41,9 +41,15 @@ var roleHauler = {
             }
         }
 
-        // Creep is not ready to work, look for energy source container with at least carryCapacity / 2 energy stored or tombstone and go there
+        // Creep is not ready to work, look for energy source container with at least carryCapacity / 2 energy stored or tombstone/droppedResource and go there
         else {
-            if (tombstones.length != 0) {
+            if (droppedResources.length != 0) {
+                let closestDroppedResource = creep.pos.findClosestByPath(droppedResources);
+                if (creep.pickup(closestDroppedResource) != 0 && creep.ticksToLive > 50) {
+                    creep.moveTo(closestDroppedResource, { visualizePathStyle: { stroke: '#ffaa00' }, reusePath: 4 });
+                }
+            }
+            else if (tombstones.length != 0) {
                 let closestTombstone = creep.pos.findClosestByPath(tombstones);
                 if (creep.withdraw(closestTombstone, RESOURCE_ENERGY) != 0 && creep.ticksToLive > 50) {
                     creep.moveTo(closestTombstone, { visualizePathStyle: { stroke: '#ffaa00' }, reusePath: 4 });

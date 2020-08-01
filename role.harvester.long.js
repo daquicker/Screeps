@@ -42,7 +42,7 @@ var roleHarvesterLong = {
                         return source.energy >= (creep.carryCapacity - creep.carry.energy) ||
                                source.ticksToRegeneration < 40;
                     }
-            });
+                });
                 creep.goHarvest(sources);
             }
             // creep is not in the correct room, move to correct room

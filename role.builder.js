@@ -19,13 +19,54 @@ var roleBuilder = {
 
         // If creep is ready to work, look for work and go there
         if (creep.memory.working) {
-            let target = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
+            // Get all construction sites by type and select a target by type and range
+            let constrSitesExtensions = [];
+            let constrSitesContainers = [];
+            let constrSitesTowers = [];
+            let constrSitesRoads = [];
+            let constrSitesRest = [];
+
+            for (let constrSite in Game.constructionSites) {
+                let currentConstrSite = Game.getObjectById(constrSite);
+                if (currentConstrSite.structureType == STRUCTURE_EXTENSION) {
+                    constrSitesExtensions.push(currentConstrSite);
+                }
+                else if (currentConstrSite.structureType == STRUCTURE_CONTAINER) {
+                    constrSitesContainers.push(currentConstrSite);
+                }
+                else if (currentConstrSite.structureType == STRUCTURE_TOWER) {
+                    constrSitesTowers.push(currentConstrSite);
+                }
+                else if (currentConstrSite.structureType == STRUCTURE_ROAD) {
+                    constrSitesRoads.push(currentConstrSite);
+                }
+                else {
+                    constrSitesRest.push(currentConstrSite);
+                }
+            }
+
+            if (constrSitesExtensions.length != 0) {
+                var target = creep.pos.findClosestByPath(constrSitesExtensions);
+            }
+            else if (constrSitesContainers.length != 0) {
+                var target = creep.pos.findClosestByPath(constrSitesContainers);
+            }
+            else if (constrSitesTowers.length != 0) {
+                var target = creep.pos.findClosestByPath(constrSitesTowers);
+            }
+            else if (constrSitesRoads.length != 0) {
+                var target = creep.pos.findClosestByPath(constrSitesRoads);
+            }
+            else {
+                var target = creep.pos.findClosestByPath(constrSitesRest);
+            }
+
             if (target) {
                 if (creep.build(target) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(target, { visualizePathStyle: { stroke: '#ffffff' }, reusePath: 2 });
                 }
             }
-                // No construction site found, run as upgrader
+            // No construction site found, run as upgrader
             else {
                 roleUpgrader.run(creep, containers, sources);
             }
@@ -37,7 +78,7 @@ var roleBuilder = {
             if (containers.length != 0) {
                 creep.goWithdraw(containers);
             }
-            // No containers in the room, find closest energy source to harvest
+                // No containers in the room, find closest energy source to harvest
             else {
                 creep.goHarvest(sources);
             }
